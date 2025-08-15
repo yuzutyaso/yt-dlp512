@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yt-dlp Downloader</title>
+</head>
+<body>
+    <h1>YouTube Downloader</h1>
+    <p>動画のURLを入力して「ダウンロード」ボタンを押してください。</p>
+
+    <div>
+        <input type="text" id="urlInput" placeholder="動画のURLを貼り付け">
+        <button onclick="downloadVideo()">ダウンロード</button>
+    </div>
+
+    <h3>ログ:</h3>
+    <pre id="logOutput"></pre>
+
+    <script>
+        async function downloadVideo() {
+            const url = document.getElementById('urlInput').value;
+            const logOutput = document.getElementById('logOutput');
+
+            logOutput.textContent = 'ダウンロード開始...';
+
+            try {
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    logOutput.textContent = data.output + '\n' + data.error;
+                } else {
+                    logOutput.textContent = `エラー: ${data.error}`;
+                }
+            } catch (error) {
+                logOutput.textContent = `ネットワークエラー: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
